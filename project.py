@@ -26,6 +26,7 @@ import sys
 import tarfile
 import tempfile
 import time
+import win32file
 
 from color import Coloring
 from git_command import GitCommand, git_require
@@ -51,6 +52,11 @@ def _lwrite(path, content):
     fd.write(content)
   finally:
     fd.close()
+
+  try:
+    os.remove(path)
+  except:
+    pass
 
   try:
     os.rename(lock, path)
@@ -2060,7 +2066,7 @@ class Project(object):
           _error("%s: Not replacing %s hook", self.relpath, name)
           continue
       try:
-        os.symlink(os.path.relpath(stock_hook, os.path.dirname(dst)), dst)
+        win32file.CreateSymbolicLink(dst, stock_hook, 1 if os.path.isdir(stock_hook) else 0)
       except OSError as e:
         if e.errno == errno.EPERM:
           raise GitError('filesystem must support symlinks')
@@ -2139,7 +2145,7 @@ class Project(object):
           os.makedirs(src)
 
         if name in to_symlink:
-          os.symlink(os.path.relpath(src, os.path.dirname(dst)), dst)
+          win32file.CreateSymbolicLink(dst, src, 1 if os.path.isdir(src) else 0)
         elif copy_all and not os.path.islink(dst):
           if os.path.isdir(src):
             shutil.copytree(src, dst)

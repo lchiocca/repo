@@ -19,6 +19,7 @@ import os
 import re
 import sys
 import xml.dom.minidom
+import win32file
 
 from pyversion import is_python3
 if is_python3():
@@ -144,7 +145,8 @@ class XmlManifest(object):
     try:
       if os.path.lexists(self.manifestFile):
         os.remove(self.manifestFile)
-      os.symlink('manifests/%s' % name, self.manifestFile)
+      src = ('manifests' + os.sep + '%s') % name
+      win32file.CreateSymbolicLink(self.manifestFile, src, 1 if os.path.isdir(src) else 0)
     except OSError as e:
       raise ManifestParseError('cannot link manifest %s: %s' % (name, str(e)))
 
