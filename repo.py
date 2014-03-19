@@ -2,8 +2,8 @@
 
 ## repo default configuration
 ##
-REPO_URL = 'https://gerrit.googlesource.com/git-repo'
-REPO_REV = 'stable'
+REPO_URL = 'https://github.com/lchiocca/repo'
+REPO_REV = 'default'
 
 # Copyright (C) 2008 Google Inc.
 #
