@@ -14,6 +14,8 @@
 # limitations under the License.
 
 from __future__ import print_function
+import platform
+if platform.system()<>"Windows": import fcntl
 import re
 import os
 import select
@@ -235,6 +237,11 @@ without iterating through the remaining projects.
         p.stdin.close()
         s_in = [sfd(p.stdout, sys.stdout),
                 sfd(p.stderr, sys.stderr)]
+
+        if platform.system()<>"Windows":
+          for s in s_in:
+            flags = fcntl.fcntl(s.fd, fcntl.F_GETFL)
+            fcntl.fcntl(s.fd, fcntl.F_SETFL, flags | os.O_NONBLOCK)
 
         while s_in:
           in_ready, _out_ready, _err_ready = select.select(s_in, [], [])
